@@ -12,8 +12,8 @@ typedef struct{
 }ETHERNET_HEADER;                    // 以太网头部, 14 Bytes
 
 typedef struct{
-    int version: 4;                  // IPv4 or IPv6
-    int header_length: 4;            // 头部长度, 真实长度 = header_len * 4
+    u_int version: 4;                  // IPv4 or IPv6
+    u_int header_length: 4;            // 头部长度, 真实长度 = header_len * 4
     u_char tos: 8;                   // 服务类型
     int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
     int identifier: 16;              // 并不知道有啥用
@@ -247,6 +247,9 @@ void print_ethernet(ETHERNET_HEADER * ethernet_header){
 
 void print_ipv4(IP_HEADER * ip_header){
     printf("|---|--IPv4 头部:\n");
+    printf("    |  +Version: %d\n", ip_header->version);
+    printf("    |  +Header Length: %d bytes\n", ip_header->header_length);
+    printf("    |  +Total Length: %d\n", ip_header->total_length);
     printf("    |  +源 IP: ");
     for(int i = 0; i < 4; ++i){
         printf("%d", ip_header->source_ip[i]);
