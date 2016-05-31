@@ -12,8 +12,9 @@ typedef struct{
 }ETHERNET_HEADER;                    // 以太网头部, 14 Bytes
 
 typedef struct{
-    u_int version: 4;                  // IPv4 or IPv6
     u_int header_length: 4;            // 头部长度, 真实长度 = header_len * 4
+    u_int version: 4;                  // IPv4 or IPv6
+    // 小端存放
     u_char tos: 8;                   // 服务类型
     int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
     int identifier: 16;              // 并不知道有啥用
