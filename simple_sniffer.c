@@ -79,20 +79,20 @@ int main(){
 
     device_name = pcap_lookupdev(errbuf);          // 获取设备名称
     if(device_name == NULL){                       // 设备查找不到
-        printf("find device error: %s\n", errbuf); // 提示错误
+        printf("Find device error: %s\n", errbuf); // 提示错误
         return 1;                                  // 退出
     }
     else{                                          // 找到设备
-        printf("找到设备 -> %s\n", device_name);    // 输出设备名称
+        printf("Found device: %s\n", device_name);    // 输出设备名称
     }
 
     pcap_t *device = pcap_open_live(device_name, 65535, 0, 0, errbuf);    // 打开设备
     if(device == NULL){                                                   // 不能打开设备
-        printf("can't open the device -> %s: %s\n", device_name, errbuf); // 错误信息提示
+        printf("Can't open the device: %s: %s\n", device_name, errbuf); // 错误信息提示
         return 1;                                                         // 退出
     }
     else{                                                                 // 成功打开设备
-        printf("成功打开设备 -> %s\n", device_name);                        // 提示成功打开
+        printf("Succeed open device: %s\n", device_name);                        // 提示成功打开
     }
 
     bpf_u_int32 netp;                                                                  // 网络号
@@ -110,11 +110,11 @@ int main(){
         else if(inet_ntop(AF_INET, &maskp, net_mask, sizeof(net_mask)) == NULL){       // 将掩码从二进制整数转换为点分十进制失败
             perror("inet_ntop maskp error");                                           // 错误提示
         }
-        printf("网络号: %s, 子网掩码: %s\n", network_number, net_mask);                  // 输出网络号和掩码
+        printf("Network Number: %s, Subnet Mask: %s\n", network_number, net_mask);                  // 输出网络号和掩码
     }
 
     if(pcap_datalink(device) != 1){ // 检查是否是以太网的数据包
-        printf("本程序不支持解析非以太网协议的数据包!\n");
+        printf("Unable to analyse datagram which is not Ethernet!\n");
         return 1;
     }
 
@@ -128,10 +128,10 @@ int main(){
 
 void get_packet(u_char * userarg, const struct pcap_pkthdr * pkthdr, const u_char * packet){
     printf("=====================================================================\n");
-    printf("序号: %d ", ++(*userarg));                                                                                   // 打印数据包序号 
-    printf("长度: %d ", pkthdr->len);                                                                                    // 打印数据包长度
-    printf("大小: %d Bytes ", pkthdr->caplen);                                                                           // 打印数据包大小
-    printf("收到时间: %s", ctime((const time_t *)&pkthdr->ts.tv_sec));                                                    // 打印数据包收到时间
+    printf("Number: %d ", ++(*userarg));                                                                                   // 打印数据包序号 
+    printf("Length: %d ", pkthdr->len);                                                                                    // 打印数据包长度
+    printf("Size: %d Bytes ", pkthdr->caplen);                                                                           // 打印数据包大小
+    printf("Received Time: %s", ctime((const time_t *)&pkthdr->ts.tv_sec));                                                    // 打印数据包收到时间
 
     if(pkthdr->len >= 14){
         ETHERNET_HEADER * ethernet_header = (ETHERNET_HEADER *)packet;
@@ -481,7 +481,7 @@ void filter(pcap_t *device, bpf_u_int32 maskp){
     struct bpf_program fp;                                  // 编译后的过滤表达式
     char str[200];                                          // 编译前的过滤表达式
     while(1){
-        printf("过滤表达式: ");
+        printf("Enter a capture filter: ");
         input_str(str, 200);                                // 获取用户输入
         if(pcap_compile(device, &fp, str, 0, maskp) == -1){ // 编译失败
             perror("pcap_compile error");                   // 报错
@@ -489,10 +489,10 @@ void filter(pcap_t *device, bpf_u_int32 maskp){
         else{                                               // 编译成功
             pcap_setfilter(device, &fp);                    // 应用过滤
             if(str[0] == '\0'){
-                printf("过滤表达式为空, 不进行数据包过滤.\n");
+                printf("Capture filter is null, don't enable filter.\n");
             }
             else{
-                printf("应用过滤表达式 \"%s\" 成功!\n", str);
+                printf("Using filter \"%s\" Succeed!\n", str);
             }
             break;
         }
