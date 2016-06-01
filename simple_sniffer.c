@@ -387,6 +387,9 @@ void print_tcp(TCP_HEADER * tcp_header){
     else{
         printf("        |     .... .... ...1 = Fin: Set\n");
     }
+    printf("        |  +Window size value: %d\n", ntohs(tcp_header->windows_size));
+    printf("        |  +Checksum: 0x%04x\n", ntohs(tcp_header->checksum));
+    printf("        |  +Urgent pointer: 0x%04x\n", ntohs(tcp_header->urgent_pointer));
 }
 
 void print_udp(UDP_HEADER * udp_header){
