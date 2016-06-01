@@ -15,15 +15,15 @@ typedef struct{
     u_int header_length: 4;            // 头部长度, 真实长度 = header_len * 4
     u_int version: 4;                  // IPv4 or IPv6
     // 小端存放
-    u_char tos: 8;                   // 服务类型
-    int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
-    int identifier: 16;              // 并不知道有啥用
-    int flags: 16;                   // 并不知道有啥用
-    u_char ttl: 8;                   // 生存时间
-    u_char proto: 8;                 // 上层协议
-    int checksum: 16;                // IP 头部校验信息
-    u_char source_ip[4];             // 源 IP
-    u_char destination_ip[4];        // 目的 IP
+    u_int tos: 8;                   // 服务类型
+    u_int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
+    u_int identifier: 16;              // 并不知道有啥用
+    u_int flags: 16;                   // 并不知道有啥用
+    u_int ttl: 8;                   // 生存时间
+    u_int proto: 8;                 // 上层协议
+    u_int checksum: 16;                // IP 头部校验信息
+    u_int source_ip[4];             // 源 IP
+    u_int destination_ip[4];        // 目的 IP
 }IP_HEADER;                          // IP 头部, 20 Bytes
 
 typedef struct{
@@ -250,7 +250,24 @@ void print_ipv4(IP_HEADER * ip_header){
     printf("|---|--IPv4 头部:\n");
     printf("    |  +Version: %d\n", ip_header->version);
     printf("    |  +Header Length: %d bytes\n", ip_header->header_length);
-    printf("    |  +Total Length: %d\n", ip_header->total_length);
+    printf("    |  +Total Length: %d\n", htons(ip_header->total_length));
+    printf("    |  +Identification: %x\n", htons(ip_header->identifier));
+    printf("    |  +Time to live: %d\n", ip_header->ttl);
+    printf("    |  +Protocol: ");
+    switch(ip_header->proto){
+        case 0x06:
+            printf("TCP (6)\n");
+            break;
+        case 0x01:
+            printf("ICMP (1)\n");
+            break;
+        case 0x11:
+            printf("UDP (11)\n");
+            break;
+        default:
+            printf("unkonow\n");
+    }
+    printf("    |  +Header checksum: %x\n", htons(ip_header->checksum));
     printf("    |  +源 IP: ");
     for(int i = 0; i < 4; ++i){
         printf("%d", ip_header->source_ip[i]);
