@@ -12,46 +12,46 @@ typedef struct{
 }ETHERNET_HEADER;                    // 以太网头部, 14 Bytes
 
 typedef struct{
-    u_int version_and_header_length: 8;            // IPv4 or IPv6 和 头部长度, 真实长度 = header_len * 4
-    u_int tos: 8;                   // 服务类型
-    u_int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
-    u_int identifier: 16;              // 并不知道有啥用
-    u_int flags: 16;                   // 并不知道有啥用
-    u_int ttl: 8;                   // 生存时间
-    u_int proto: 8;                 // 上层协议
-    u_int checksum: 16;                // IP 头部校验信息
-    u_char source_ip[4];             // 源 IP
-    u_char destination_ip[4];        // 目的 IP
-}IP_HEADER;                          // IP 头部, 20 Bytes
+    u_int version_and_header_length: 8; // IPv4 or IPv6 和 头部长度, 真实长度 = header_len * 4
+    u_int tos: 8;                       // 服务类型
+    u_int total_length: 16;             // 包括 IP 报头 的 IP 报文总长度(Byte)
+    u_int identifier: 16;               // 并不知道有啥用
+    u_int flags: 16;                    // 并不知道有啥用
+    u_int ttl: 8;                       // 生存时间
+    u_int proto: 8;                     // 上层协议
+    u_int checksum: 16;                 // IP 头部校验信息
+    u_char source_ip[4];                // 源 IP
+    u_char destination_ip[4];           // 目的 IP
+}IP_HEADER;                             // IP 头部, 20 Bytes
 
 typedef struct{
-    int hardware_type: 16;           // 硬件类型
-    int protocol_type: 16;           // 协议类型
-    int hardware_length: 8;          // 硬件地址长度
-    int protocol_length: 8;          // 协议地址长度
-    int opercation_code: 16;         // op
-    u_char sender_mac[6];            // 发送端 MAC
-    u_char sender_ip[4];             // 发送端 IP
-    u_char destination_mac[6];       // 目的 MAC
-    u_char destination_ip[4];        // 目的 IP
-}ARP_HEADER;                         // ARP 头部, 18 Bytes
+    u_int hardware_type: 16;   // 硬件类型
+    u_int protocol_type: 16;   // 协议类型
+    u_int hardware_length: 8;  // 硬件地址长度
+    u_int protocol_length: 8;  // 协议地址长度
+    u_int opercation_code: 16; // op
+    u_char sender_mac[6];      // 发送端 MAC
+    u_char sender_ip[4];       // 发送端 IP
+    u_char destination_mac[6]; // 目的 MAC
+    u_char destination_ip[4];  // 目的 IP
+}ARP_HEADER;                   // ARP 头部, 18 Bytes
 
 typedef struct{
-    u_char type: 8;                  // 类型
-    u_char code: 8;                  // 代码
-    u_int checksum: 16;              // 校验和
-}ICMP_HEADER;                        // ICMP 头部, 3 Bytes
+    u_char type: 8;     // 类型
+    u_char code: 8;     // 代码
+    u_int checksum: 16; // 校验和
+}ICMP_HEADER;           // ICMP 头部, 3 Bytes
 
 typedef struct{
-    uint16_t source_port: 16;        // 源端口号
-    uint16_t destination_port: 16;   // 目的端口号
-    u_int sequence_number: 32;       // 序列号
-    u_int acknowledge_number: 32;    // 确认序号
-    u_int header_length_and_flag: 16;          // 头部长度, 真实长度 = header_length * 4 和 标志位
-    u_int windows_size: 16;          // 窗口大小
-    u_int checksum: 16;              // 校验和, 不仅对头部校验, 而且对内容校验
-    u_int urgent_pointer: 16;        // 紧急指针
-}TCP_HEADER;                         // TCP 头部, 20 Bytes
+    uint16_t source_port: 16;         // 源端口号
+    uint16_t destination_port: 16;    // 目的端口号
+    u_int sequence_number: 32;        // 序列号
+    u_int acknowledge_number: 32;     // 确认序号
+    u_int header_length_and_flag: 16; // 头部长度, 真实长度 = header_length * 4 和 标志位
+    u_int windows_size: 16;           // 窗口大小
+    u_int checksum: 16;               // 校验和, 不仅对头部校验, 而且对内容校验
+    u_int urgent_pointer: 16;         // 紧急指针
+}TCP_HEADER;                          // TCP 头部, 20 Bytes
 
 typedef struct{
     uint16_t source_port: 16;        // 源端口号
@@ -334,7 +334,72 @@ void print_ipv4(IP_HEADER * ip_header){
 }
 
 void print_arp(ARP_HEADER * arp_header){
-
+    printf("|---|--Address Resolution Protocol:\n");
+    if((htons(arp_header->hardware_type)) == 0x01){
+        printf("    |  +Hardware type: Ethernet (1)\n");
+    }
+    else{
+        printf("    |  +Hardware type: unknown (%d)\n", htons(arp_header->hardware_type));
+    }
+    if((htons(arp_header->protocol_type)) == 0x0800){
+        printf("    |  +Protocol type: IPv4 (0x0800)\n");
+    }
+    else{
+        printf("    |  +Protocol type: unknown (%d)\n", htons(arp_header->protocol_type));
+    }
+    printf("    |  +Hardware size: %d\n", arp_header->hardware_length);
+    printf("    |  +Protocol size: %d\n", arp_header->protocol_length);
+    unsigned int temp_opercation_code = htons(arp_header->opercation_code);
+    switch(temp_opercation_code){
+        case 0x01:
+            printf("    |  +Opcode: request (1)\n");
+            break;
+        case 0x02:
+            printf("    |  +Opcode: reply (2)\n");
+            break;
+        default:
+            printf("    |  +Opcode: unknown (%d)\n", temp_opercation_code);
+    }
+    printf("    |  +Sender MAC address: ");
+    for(int i = 0; i < 6; ++i){
+        printf("%02X", arp_header->sender_mac[i]);
+        if(i != 5){
+            printf("-");
+        }
+        else{
+            printf("\n");
+        }
+    }
+    printf("    |  +Sender IP address: ");
+    for(int i = 0; i < 4; ++i){
+        printf("%u", arp_header->sender_ip[i]);
+        if(i != 3){
+            printf(".");
+        }
+        else{
+            printf("\n");
+        }
+    }
+    printf("    |  +Target MAC address: ");
+    for(int i = 0; i < 6; ++i){
+        printf("%02X", arp_header->destination_mac[i]);
+        if(i != 5){
+            printf("-");
+        }
+        else{
+            printf("\n");
+        }
+    }
+    printf("    |  +Target IP address: ");
+    for(int i = 0; i < 4; ++i){
+        printf("%u", arp_header->destination_ip[i]);
+        if(i != 3){
+            printf(".");
+        }
+        else{
+            printf("\n");
+        }
+    }
 }
 
 void print_icmp(ICMP_HEADER * icmp_header){
