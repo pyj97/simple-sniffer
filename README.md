@@ -8,7 +8,7 @@ simple-sniffer 是一个简单的嗅探器, 由 C 语言使用 libpcap 库实现
 
 ## 代码量
 
-```
+```shell
 > wc -l *.c
      500 simple_sniffer.c
 ```
