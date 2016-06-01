@@ -12,9 +12,7 @@ typedef struct{
 }ETHERNET_HEADER;                    // 以太网头部, 14 Bytes
 
 typedef struct{
-    u_int header_length: 4;            // 头部长度, 真实长度 = header_len * 4
-    u_int version: 4;                  // IPv4 or IPv6
-    // 小端存放
+    u_int version_and_header_length: 8;            // IPv4 or IPv6 和 头部长度, 真实长度 = header_len * 4
     u_int tos: 8;                   // 服务类型
     u_int total_length: 16;            // 包括 IP 报头 的 IP 报文总长度(Byte)
     u_int identifier: 16;              // 并不知道有啥用
@@ -261,7 +259,9 @@ void print_ethernet(ETHERNET_HEADER * ethernet_header){
 
 void print_ipv4(IP_HEADER * ip_header){
     printf("|---|--Internet Protocol Version 4:\n");
-    printf("    |  +Version: %d\n", ip_header->version); // 版本信息
+    unsigned short temp_version_and_header_length = ip_header->version_and_header_length;
+    printf("    |  +Version: %d\n", (temp_version_and_header_length & 0xF0) >> 4); // 版本信息
+    printf("    |  +Header Length: %d bytes\n", temp_version_and_header_length & 0x0F);
     printf("    |  +Differentiated Services Field: 0x%02x\n", ip_header->tos); // 区分服务字段
     printf("    |     ");
     for(int i = 7; i >= 2; i--){
@@ -275,7 +275,6 @@ void print_ipv4(IP_HEADER * ip_header){
     printf("%d", (ip_header->tos>>1) % 2);
     printf("%d", ip_header->tos % 2);
     printf(" = Explicit Congestion Notification\n");
-    printf("    |  +Header Length: %d bytes\n", ip_header->header_length);
     printf("    |  +Total Length: %d\n", htons(ip_header->total_length));
     printf("    |  +Identification: 0x%04x\n", htons(ip_header->identifier));
     unsigned short temp_flags = htons(ip_header->flags); // 计算 Flags 两个字节的内容
