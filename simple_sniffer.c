@@ -49,9 +49,7 @@ typedef struct{
     uint16_t destination_port: 16;   // 目的端口号
     u_int sequence_number: 32;       // 序列号
     u_int acknowledge_number: 32;    // 确认序号
-    u_int header_length: 4;          // 头部长度, 真实长度 = header_length * 4
-    u_int no_name: 6;                // 并不知道有啥用
-    u_int no_nmae_1: 6;              // 并不知道有啥用
+    u_int header_length_and_flag: 16;          // 头部长度, 真实长度 = header_length * 4 和 标志位
     u_int windows_size: 16;          // 窗口大小
     u_int checksum: 16;              // 校验和, 不仅对头部校验, 而且对内容校验
     u_int urgent_pointer: 16;        // 紧急指针
@@ -345,9 +343,50 @@ void print_icmp(ICMP_HEADER * icmp_header){
 }
 
 void print_tcp(TCP_HEADER * tcp_header){
-    printf("    |---|--TCP 头部:\n");
-    printf("        |  +源端口号: %d\n", ntohs(tcp_header->source_port));
-    printf("        |  +目的端口号: %d\n", ntohs(tcp_header->destination_port));
+    printf("    |---|--Transmission Control Protocol:\n");
+    printf("        |  +Source Port: %d\n", ntohs(tcp_header->source_port));
+    printf("        |  +Destination Port: %d\n", ntohs(tcp_header->destination_port));
+    printf("        |  +Sequence number: 0x%08x\n", ntohl(tcp_header->sequence_number));
+    printf("        |  +Acknowledgment number: 0x%08x\n", ntohl(tcp_header->acknowledge_number));
+    unsigned short temp_header_length_and_flag = ntohs(tcp_header->header_length_and_flag);
+    printf("        |  +Header Length: %d bytes\n", (temp_header_length_and_flag>>12) * 4);
+    printf("        |  +Flags:\n");
+    if((temp_header_length_and_flag>>5) % 2 == 0){
+        printf("        |     .... ..0. .... = Urgent: Not set\n");
+    }
+    else{
+        printf("        |     .... ..1. .... = Urgent: Set\n");
+    }
+    if((temp_header_length_and_flag>>4) % 2 == 0){
+        printf("        |     .... ...0 .... = Acknowledgment: Not set\n");
+    }
+    else{
+        printf("        |     .... ...1 .... = Acknowledgment: Set\n");
+    }
+    if((temp_header_length_and_flag>>3) % 2 == 0){
+        printf("        |     .... .... 0... = Push: Not set\n");
+    }
+    else{
+        printf("        |     .... .... 1... = Push: Set\n");
+    }
+    if((temp_header_length_and_flag>>2) % 2 == 0){
+        printf("        |     .... .... .0.. = Reset: Not set\n");
+    }
+    else{
+        printf("        |     .... .... .1.. = Reset: Set\n");
+    }
+    if((temp_header_length_and_flag>>1) % 2 == 0){
+        printf("        |     .... .... ..0. = Syn: Not set\n");
+    }
+    else{
+        printf("        |     .... .... ..1. = Syn: Set\n");
+    }
+    if((temp_header_length_and_flag) % 2 == 0){
+        printf("        |     .... .... ...0 = Fin: Not set\n");
+    }
+    else{
+        printf("        |     .... .... ...1 = Fin: Set\n");
+    }
 }
 
 void print_udp(UDP_HEADER * udp_header){
