@@ -39,7 +39,7 @@ typedef struct{
 typedef struct{
     u_char type: 8;                  // 类型
     u_char code: 8;                  // 代码
-    u_char checksum: 8;              // 校验和
+    u_int checksum: 16;              // 校验和
 }ICMP_HEADER;                        // ICMP 头部, 3 Bytes
 
 typedef struct{
@@ -338,7 +338,10 @@ void print_arp(ARP_HEADER * arp_header){
 }
 
 void print_icmp(ICMP_HEADER * icmp_header){
-
+    printf("    |---|--Internet Control Message Protocol:\n");
+    printf("        |  +Type: %d\n", icmp_header->type);
+    printf("        |  +Code: %d\n", icmp_header->code);
+    printf("        |  +Checksum: 0x%04x\n", ntohs(icmp_header->type));
 }
 
 void print_tcp(TCP_HEADER * tcp_header){
