@@ -7,12 +7,17 @@
 simple-sniffer 是一个简单的嗅探器, 由 C 语言使用 libpcap 库实现, 具有抓取过滤功能, 可以对抓取的数据包进行还算详细的分析. 该工具在 Mac OS X 上实现, 没有图形化界面, 在 Linux 上应该也可以运行, 但并没有在 Linux 上进行测试.
 
 ## 编译运行
+
 ### 环境
 * GCC
 * libpcap
+
 ### 编译
+
 `gcc simple_sniffer.c -lpcap -o simple_sniffer.out`
+
 ### 运行
+
 `./simple_sniffer.out`
 
 ## 功能
