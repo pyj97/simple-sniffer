@@ -248,12 +248,25 @@ void print_ethernet(ETHERNET_HEADER * ethernet_header){
 
 void print_ipv4(IP_HEADER * ip_header){
     printf("|---|--IPv4 头部:\n");
-    printf("    |  +Version: %d\n", ip_header->version);
+    printf("    |  +Version: %d\n", ip_header->version); // 版本信息
+    printf("    |  +Differentiated Services Field: 0x%02x\n", ip_header->tos); // 区分服务字段
+    printf("    |     ");
+    for(int i = 7; i >= 2; i--){
+        if(i == 3){
+            printf(" ");
+        }
+        printf("%d", (ip_header->tos>>i) % 2);
+    }
+    printf(".. = Differentiated Services Codepoint\n");
+    printf("    |     .... ..");
+    printf("%d", (ip_header->tos>>1) % 2);
+    printf("%d", ip_header->tos % 2);
+    printf(" = Explicit Congestion Notification\n");
     printf("    |  +Header Length: %d bytes\n", ip_header->header_length);
     printf("    |  +Total Length: %d\n", htons(ip_header->total_length));
-    printf("    |  +Identification: 0x%x\n", htons(ip_header->identifier));
+    printf("    |  +Identification: 0x%04x\n", htons(ip_header->identifier));
     unsigned short temp_flags = htons(ip_header->flags); // 计算 Flags 两个字节的内容
-    printf("    |  +Flags: 0x%x\n", temp_flags>>13); // 输出标志位的值
+    printf("    |  +Flags: 0x%02x\n", temp_flags>>13); // 输出标志位的值
     if(temp_flags>>15 == 0){ // 输出保留位的值
         printf("    |     0... .... = Reserved bit: Not set\n");
     }
@@ -285,7 +298,7 @@ void print_ipv4(IP_HEADER * ip_header){
         default:
             printf("unkonow\n");
     }
-    printf("    |  +Header checksum: 0x%x\n", htons(ip_header->checksum));
+    printf("    |  +Header checksum: 0x%04x\n", htons(ip_header->checksum));
     printf("    |  +Source: ");
     for(int i = 0; i < 4; ++i){
         printf("%u", ip_header->source_ip[i]);
