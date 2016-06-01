@@ -22,8 +22,8 @@ typedef struct{
     u_int ttl: 8;                   // 生存时间
     u_int proto: 8;                 // 上层协议
     u_int checksum: 16;                // IP 头部校验信息
-    u_int source_ip[4];             // 源 IP
-    u_int destination_ip[4];        // 目的 IP
+    u_char source_ip[4];             // 源 IP
+    u_char destination_ip[4];        // 目的 IP
 }IP_HEADER;                          // IP 头部, 20 Bytes
 
 typedef struct{
@@ -268,9 +268,9 @@ void print_ipv4(IP_HEADER * ip_header){
             printf("unkonow\n");
     }
     printf("    |  +Header checksum: %x\n", htons(ip_header->checksum));
-    printf("    |  +源 IP: ");
+    printf("    |  +Source: ");
     for(int i = 0; i < 4; ++i){
-        printf("%d", ip_header->source_ip[i]);
+        printf("%u", ip_header->source_ip[i]);
         if(i != 3){
             printf(".");
         }
@@ -278,7 +278,7 @@ void print_ipv4(IP_HEADER * ip_header){
             printf("\n");
         }
     }
-    printf("    |  +目的 IP: ");
+    printf("    |  +Destination: ");
     for(int i = 0; i < 4; ++i){
         printf("%d", ip_header->destination_ip[i]);
         if(i != 3){
