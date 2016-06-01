@@ -83,16 +83,16 @@ int main(){
         return 1;                                  // 退出
     }
     else{                                          // 找到设备
-        printf("Found device: %s\n", device_name);    // 输出设备名称
+        printf("Found device: %s\n", device_name); // 输出设备名称
     }
 
-    pcap_t *device = pcap_open_live(device_name, 65535, 0, 0, errbuf);    // 打开设备
-    if(device == NULL){                                                   // 不能打开设备
+    pcap_t *device = pcap_open_live(device_name, 65535, 0, 0, errbuf);  // 打开设备
+    if(device == NULL){                                                 // 不能打开设备
         printf("Can't open the device: %s: %s\n", device_name, errbuf); // 错误信息提示
-        return 1;                                                         // 退出
+        return 1;                                                       // 退出
     }
-    else{                                                                 // 成功打开设备
-        printf("Succeed open device: %s\n", device_name);                        // 提示成功打开
+    else{                                                               // 成功打开设备
+        printf("Succeed open device: %s\n", device_name);               // 提示成功打开
     }
 
     bpf_u_int32 netp;                                                                  // 网络号
@@ -110,7 +110,7 @@ int main(){
         else if(inet_ntop(AF_INET, &maskp, net_mask, sizeof(net_mask)) == NULL){       // 将掩码从二进制整数转换为点分十进制失败
             perror("inet_ntop maskp error");                                           // 错误提示
         }
-        printf("Network Number: %s, Subnet Mask: %s\n", network_number, net_mask);                  // 输出网络号和掩码
+        printf("Network Number: %s, Subnet Mask: %s\n", network_number, net_mask);     // 输出网络号和掩码
     }
 
     if(pcap_datalink(device) != 1){ // 检查是否是以太网的数据包
