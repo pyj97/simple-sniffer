@@ -392,9 +392,11 @@ void print_tcp(TCP_HEADER * tcp_header){
 }
 
 void print_udp(UDP_HEADER * udp_header){
-    printf("    |---|--UDP 头部:\n");
-    printf("        |  +源端口号: %d\n", ntohs(udp_header->source_port));
-    printf("        |  +目的端口号: %d\n", ntohs(udp_header->destination_port));
+    printf("    |---|--User Datagram Protocol:\n");
+    printf("        |  +Source Port: %d\n", ntohs(udp_header->source_port));
+    printf("        |  +Destination Port: %d\n", ntohs(udp_header->destination_port));
+    printf("        |  +Length: %d\n", ntohs(udp_header->length));
+    printf("        |  +Checksum: 0x%04x\n", ntohs(udp_header->checksum));
 }
 
 void input_str(char * str, int length){
