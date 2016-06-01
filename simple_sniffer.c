@@ -223,18 +223,8 @@ void print_two_data(const u_char * packet, char * ascii_char, int length){
 }
 
 void print_ethernet(ETHERNET_HEADER * ethernet_header){
-    printf("|--以太网头部:\n");
-    printf("|  +源 MAC: ");
-    for(int i = 0; i < 6; ++i){
-        printf("%02X", ethernet_header->source_mac[i]);
-        if(i != 5){
-            printf("-");
-        }
-        else{
-            printf("\n");
-        }
-    }
-    printf("|  +目的 MAC: ");
+    printf("|--Ethernet:\n");
+    printf("|  +Destination: ");
     for(int i = 0; i < 6; ++i){
         printf("%02X", ethernet_header->destination_mac[i]);
         if(i != 5){
@@ -244,10 +234,35 @@ void print_ethernet(ETHERNET_HEADER * ethernet_header){
             printf("\n");
         }
     }
+    printf("|  +Source: ");
+    for(int i = 0; i < 6; ++i){
+        printf("%02X", ethernet_header->source_mac[i]);
+        if(i != 5){
+            printf("-");
+        }
+        else{
+            printf("\n");
+        }
+    }
+    printf("|  +Type: ");
+    int temp_type = (int)(ethernet_header->type[0]) * 256 + (int)(ethernet_header->type[1]);
+    switch(temp_type){
+        case 0x0800:
+            printf("IPv4 (0x%04x)\n", temp_type);
+            break;
+        case 0x86dd:
+            printf("IPv5 (0x%04x)\n", temp_type);
+            break;
+        case 0x0806:
+            printf("ARP (0x%04x)\n", temp_type);
+            break;
+        default:
+            printf("unknown (0x%04x)\n", temp_type);
+    }
 }
 
 void print_ipv4(IP_HEADER * ip_header){
-    printf("|---|--IPv4 头部:\n");
+    printf("|---|--Internet Protocol Version 4:\n");
     printf("    |  +Version: %d\n", ip_header->version); // 版本信息
     printf("    |  +Differentiated Services Field: 0x%02x\n", ip_header->tos); // 区分服务字段
     printf("    |     ");
@@ -296,7 +311,7 @@ void print_ipv4(IP_HEADER * ip_header){
             printf("UDP (11)\n");
             break;
         default:
-            printf("unkonow\n");
+            printf("unknown (%d)\n", ip_header->proto);
     }
     printf("    |  +Header checksum: 0x%04x\n", htons(ip_header->checksum));
     printf("    |  +Source: ");
