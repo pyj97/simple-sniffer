@@ -251,7 +251,25 @@ void print_ipv4(IP_HEADER * ip_header){
     printf("    |  +Version: %d\n", ip_header->version);
     printf("    |  +Header Length: %d bytes\n", ip_header->header_length);
     printf("    |  +Total Length: %d\n", htons(ip_header->total_length));
-    printf("    |  +Identification: %x\n", htons(ip_header->identifier));
+    printf("    |  +Identification: 0x%x\n", htons(ip_header->identifier));
+    unsigned short temp_flags = htons(ip_header->flags); // 计算 Flags 两个字节的内容
+    printf("    |  +Flags: 0x%x\n", temp_flags>>13); // 输出标志位的值
+    if(temp_flags>>15 == 0){ // 输出保留位的值
+        printf("    |     0... .... = Reserved bit: Not set\n");
+    }
+    if((temp_flags>>14) % 2 == 1){ // 输出 DF 标志位的值
+        printf("    |     .1.. .... = Don't fragment: Set\n");
+    }
+    else{
+        printf("    |     .0.. .... = Don't fragment: Not set\n");
+    }
+    if((temp_flags>>13) % 2 == 0){ // 输出 MF 的标志位的值
+        printf("    |     ..0. .... = More fragment: Not set\n");
+    }
+    else{
+        printf("    |     ..1. .... = More fragment: Set\n");
+    }
+    printf("    |     Fragment offset: %d\n", temp_flags&0x1FFF); // 输出分段偏移量的值
     printf("    |  +Time to live: %d\n", ip_header->ttl);
     printf("    |  +Protocol: ");
     switch(ip_header->proto){
@@ -267,7 +285,7 @@ void print_ipv4(IP_HEADER * ip_header){
         default:
             printf("unkonow\n");
     }
-    printf("    |  +Header checksum: %x\n", htons(ip_header->checksum));
+    printf("    |  +Header checksum: 0x%x\n", htons(ip_header->checksum));
     printf("    |  +Source: ");
     for(int i = 0; i < 4; ++i){
         printf("%u", ip_header->source_ip[i]);
