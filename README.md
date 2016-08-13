@@ -8,7 +8,7 @@ simple-sniffer 是一个简单的嗅探器, 由 C 语言使用 libpcap 库实现
 
 ## 代码量
 
-```shell
+```console
 > wc -l *.c
      500 simple_sniffer.c
 ```
@@ -37,7 +37,7 @@ simple-sniffer 是一个简单的嗅探器, 由 C 语言使用 libpcap 库实现
 
 * 部分输出, 只展示了抓取的两个包:
 
-```
+```console
 > gcc simple_sniffer.c -lpcap -o simple_sniffer.out;./simple_sniffer.out
 Found device: en0
 Succeed open device: en0
@@ -115,7 +115,7 @@ Number: 2 Length: 62 Size: 62 Bytes Received Time: Wed Jun  1 21:24:34 2016
 
 * TCP 包分析展示:
 
-```
+```console
 Number: 170 Length: 54 Size: 54 Bytes Received Time: Wed Jun  1 21:30:10 2016
 |--Ethernet:
 |  +Destination: CC-34-29-96-2D-26
@@ -163,7 +163,7 @@ Number: 170 Length: 54 Size: 54 Bytes Received Time: Wed Jun  1 21:30:10 2016
 
 * UDP 包分析展示:
 
-```
+```console
 Number: 120 Length: 72 Size: 72 Bytes Received Time: Wed Jun  1 21:32:44 2016
 |--Ethernet:
 |  +Destination: CC-34-29-96-2D-26
